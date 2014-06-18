@@ -89,19 +89,30 @@ class ClockView: UIView {
         let minuteHand = CAShapeLayer()
         minuteHand.frame = CGRectMake(0, 0, clockSize, clockSize)
         minuteHand.fillColor = UIColor.blackColor().CGColor
-        let minuteShape = UIBezierPath()
-        minuteShape.moveToPoint(minuteStartPoint)
-        minuteShape.addLineToPoint(CGPointMake(minuteStartPoint.x, minuteStartPoint.y-minuteHeight))
-        minuteShape.addLineToPoint(CGPointMake(minuteStartPoint.x+minuteWidth, minuteStartPoint.y-minuteHeight))
-        minuteShape.addLineToPoint(CGPointMake(minuteStartPoint.x+minuteWidth, minuteStartPoint.y))
-        minuteShape.closePath()
 
-        minuteHand.path = minuteShape.CGPath
+        minuteHand.path = self.makeRectPath(minuteStartPoint, width: minuteWidth, height: minuteHeight)
 
         // anchor point is already 0.5,0.5 so we can just rotate
         minuteHand.transform = CATransform3DMakeRotation(0.1, 0, 0, 1)
 
         self.handsLayer.addSublayer(minuteHand)
+
+        // set up the hour hand
+        let hourWidth = 4.0
+        let hourHeight = 35.0
+        let hourStartPoint = CGPointMake((clockSize/2)-(hourWidth/2), clockSize/2)
+
+        // draw hour hand
+        let hourHand = CAShapeLayer()
+        hourHand.frame = CGRectMake(0, 0, clockSize, clockSize)
+        hourHand.fillColor = UIColor.blackColor().CGColor
+
+        hourHand.path = self.makeRectPath(hourStartPoint, width: hourWidth, height: hourHeight)
+
+        // anchor point is already 0.5,0.5 so we can just rotate
+        hourHand.transform = CATransform3DMakeRotation(0.8, 0, 0, 1)
+
+        self.handsLayer.addSublayer(hourHand)
 
         // draw the red center bit over the black existing ones
         let redPath = UIBezierPath(ovalInRect: CGRectMake((clockSize/2)-(redSize/2), (clockSize/2)-(redSize/2), redSize, redSize))
@@ -119,14 +130,8 @@ class ClockView: UIView {
         //        secondHand.backgroundColor = UIColor.greenColor().CGColor
         secondHand.frame = CGRectMake(0, 0, clockSize, clockSize)
         secondHand.fillColor = UIColor.redColor().CGColor
-        let secondShape = UIBezierPath()
-        secondShape.moveToPoint(secondStartPoint)
-        secondShape.addLineToPoint(CGPointMake(secondStartPoint.x, secondStartPoint.y-secondHeight))
-        secondShape.addLineToPoint(CGPointMake(secondStartPoint.x+secondWidth, secondStartPoint.y-secondHeight))
-        secondShape.addLineToPoint(CGPointMake(secondStartPoint.x+secondWidth, secondStartPoint.y))
-        secondShape.closePath()
 
-        secondHand.path = secondShape.CGPath
+        secondHand.path = self.makeRectPath(secondStartPoint, width: secondWidth, height: secondHeight)
 
         // anchor point is already 0.5,0.5 so we can just rotate
         secondHand.transform = CATransform3DMakeRotation(M_PI, 0, 0, 1)
@@ -134,9 +139,15 @@ class ClockView: UIView {
         self.handsLayer.addSublayer(secondHand)
     }
 
-    func makeRectPath(start: CGPoint, width: Float, height: Float) -> CGPath {
+    // convenience, makes a rectangular path
+    func makeRectPath(start: CGPoint, width: CGFloat, height: CGFloat) -> CGPath {
 
         let path = UIBezierPath()
+        path.moveToPoint(start)
+        path.addLineToPoint(CGPointMake(start.x, start.y - height))
+        path.addLineToPoint(CGPointMake(start.x+width, start.y-height))
+        path.addLineToPoint(CGPointMake(start.x+width, start.y))
+        path.closePath()
 
         return path.CGPath
     }
