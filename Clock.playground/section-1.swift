@@ -68,6 +68,23 @@ class ClockView: UIView {
     }
 
     func setUpHandsLayer() {
+        // look up time for hand values
+        let format = NSDateFormatter()
+        let now = NSDate()
+
+        format.dateFormat = "hh"
+        let hour = format.stringFromDate(now).toInt()!
+        let hourRotation = 2.0*M_PI*(Double(hour)/12.0)
+
+        format.dateFormat = "mm"
+        let minute = format.stringFromDate(now).toInt()!
+        let minuteRotation = 2.0*M_PI*(Double(minute)/60.0)
+
+        format.dateFormat = "ss"
+        let second = format.stringFromDate(now).toInt()!
+        let secondRotation = 2.0*M_PI*(Double(second)/60.0)
+
+        // style setup for the hands
         let darkCenter = CAShapeLayer()
         let darkSize = 13.0
         let redCenter = CAShapeLayer()
@@ -93,7 +110,7 @@ class ClockView: UIView {
         minuteHand.path = self.makeRectPath(minuteStartPoint, width: minuteWidth, height: minuteHeight)
 
         // anchor point is already 0.5,0.5 so we can just rotate
-        minuteHand.transform = CATransform3DMakeRotation(0.1, 0, 0, 1)
+        minuteHand.transform = CATransform3DMakeRotation(minuteRotation, 0, 0, 1)
 
         self.handsLayer.addSublayer(minuteHand)
 
@@ -110,7 +127,7 @@ class ClockView: UIView {
         hourHand.path = self.makeRectPath(hourStartPoint, width: hourWidth, height: hourHeight)
 
         // anchor point is already 0.5,0.5 so we can just rotate
-        hourHand.transform = CATransform3DMakeRotation(0.8, 0, 0, 1)
+        hourHand.transform = CATransform3DMakeRotation(hourRotation, 0, 0, 1)
 
         self.handsLayer.addSublayer(hourHand)
 
@@ -134,7 +151,7 @@ class ClockView: UIView {
         secondHand.path = self.makeRectPath(secondStartPoint, width: secondWidth, height: secondHeight)
 
         // anchor point is already 0.5,0.5 so we can just rotate
-        secondHand.transform = CATransform3DMakeRotation(M_PI, 0, 0, 1)
+        secondHand.transform = CATransform3DMakeRotation(secondRotation, 0, 0, 1)
 
         self.handsLayer.addSublayer(secondHand)
     }
