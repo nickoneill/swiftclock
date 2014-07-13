@@ -1,9 +1,10 @@
 // Clockground - noun: a place where people can clock
 
-import UIKit
+import Cocoa
 import QuartzCore
+import XCPlayground
 
-class ClockView: UIView {
+class ClockView: NSView {
     let backgroundLayer = CAShapeLayer()
     let faceLayer = CAShapeLayer()
     let handsLayer = CAShapeLayer()
@@ -27,9 +28,10 @@ class ClockView: UIView {
     }
 
     func setUpBackgroundLayer() {
-        let backgroundPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: 45)
+//        let backgroundPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: 45)
+        let backgroundPath = NSBezierPath(roundedRect: self.bounds, xRadius: 45, yRadius: 45)
 
-        self.backgroundLayer.path = backgroundPath.CGPath
+        self.backgroundLayer.path = CGPathFromNSBezierPath(backgroundPath)
     }
 
     func setUpFaceLayer() {
@@ -39,10 +41,11 @@ class ClockView: UIView {
         let numberWidth = 22.0
         let numberHeight = 22.0
 
-        let facePath = UIBezierPath(ovalInRect: CGRectMake(faceInset, faceInset, faceRadius, faceRadius))
+//        let facePath = UIBezierPath(ovalInRect: CGRectMake(faceInset, faceInset, faceRadius, faceRadius))
+        let facePath = NSBezierPath(ovalInRect: CGRectMake(faceInset, faceInset, faceRadius, faceRadius))
 
-        self.faceLayer.fillColor = UIColor.whiteColor().CGColor
-        self.faceLayer.path = facePath.CGPath
+        self.faceLayer.fillColor = NSColor.whiteColor().CGColor
+        self.faceLayer.path = CGPathFromNSBezierPath(facePath)
 
         for hour in 1...12 {
             let hourtext = NSString(format: "%d", hour)
@@ -52,6 +55,7 @@ class ClockView: UIView {
 
             let xadj = cos(Double(position))
             let yadj = sin(Double(position))
+//            XCPCaptureValue("cosvalue", xadj)
             let xpos = (clockSize/2) + (xadj*numberRadius) - (numberWidth/2)
             let ypos = (clockSize/2) + (yadj*numberRadius) - (numberWidth/2)
 
@@ -59,9 +63,9 @@ class ClockView: UIView {
             text.frame = CGRectMake(xpos, ypos, numberWidth, numberHeight)
             text.string = hourtext
             text.fontSize = 20
-            text.font = UIFont(name: "HelveticaNeue-Light", size: 10)
+            text.font = NSFont(name: "HelveticaNeue-Light", size: 10)
             text.alignmentMode = kCAAlignmentCenter
-            text.foregroundColor = UIColor.blackColor().CGColor
+            text.foregroundColor = NSColor.blackColor().CGColor
 
             self.faceLayer.addSublayer(text)
         }
@@ -88,12 +92,13 @@ class ClockView: UIView {
         let darkCenter = CAShapeLayer()
         let darkSize = 13.0
         let redCenter = CAShapeLayer()
-        redCenter.fillColor = UIColor.redColor().CGColor
+        redCenter.fillColor = NSColor.redColor().CGColor
         let redSize = 5.0
 
         // draw the black center circle
-        let darkPath = UIBezierPath(ovalInRect: CGRectMake((clockSize/2)-(darkSize/2), (clockSize/2)-(darkSize/2), darkSize, darkSize))
-        darkCenter.path = darkPath.CGPath
+//        let darkPath = UIBezierPath(ovalInRect: CGRectMake((clockSize/2)-(darkSize/2), (clockSize/2)-(darkSize/2), darkSize, darkSize))
+        let darkPath = NSBezierPath(ovalInRect: CGRectMake((clockSize/2)-(darkSize/2), (clockSize/2)-(darkSize/2), darkSize, darkSize))
+        darkCenter.path = CGPathFromNSBezierPath(darkPath)
 
         self.handsLayer.addSublayer(darkCenter)
 
@@ -105,7 +110,7 @@ class ClockView: UIView {
         // draw minute hand
         let minuteHand = CAShapeLayer()
         minuteHand.frame = CGRectMake(0, 0, clockSize, clockSize)
-        minuteHand.fillColor = UIColor.blackColor().CGColor
+        minuteHand.fillColor = NSColor.blackColor().CGColor
 
         minuteHand.path = self.makeRectPath(minuteStartPoint, width: minuteWidth, height: minuteHeight)
 
@@ -122,7 +127,7 @@ class ClockView: UIView {
         // draw hour hand
         let hourHand = CAShapeLayer()
         hourHand.frame = CGRectMake(0, 0, clockSize, clockSize)
-        hourHand.fillColor = UIColor.blackColor().CGColor
+        hourHand.fillColor = NSColor.blackColor().CGColor
 
         hourHand.path = self.makeRectPath(hourStartPoint, width: hourWidth, height: hourHeight)
 
@@ -132,8 +137,9 @@ class ClockView: UIView {
         self.handsLayer.addSublayer(hourHand)
 
         // draw the red center bit over the black existing ones
-        let redPath = UIBezierPath(ovalInRect: CGRectMake((clockSize/2)-(redSize/2), (clockSize/2)-(redSize/2), redSize, redSize))
-        redCenter.path = redPath.CGPath
+//        let redPath = UIBezierPath(ovalInRect: CGRectMake((clockSize/2)-(redSize/2), (clockSize/2)-(redSize/2), redSize, redSize))
+        let redPath = NSBezierPath(ovalInRect: CGRectMake((clockSize/2)-(redSize/2), (clockSize/2)-(redSize/2), redSize, redSize))
+        redCenter.path = CGPathFromNSBezierPath(redPath)
 
         self.handsLayer.addSublayer(redCenter)
 
@@ -146,12 +152,21 @@ class ClockView: UIView {
         let secondHand = CAShapeLayer()
         //        secondHand.backgroundColor = UIColor.greenColor().CGColor
         secondHand.frame = CGRectMake(0, 0, clockSize, clockSize)
-        secondHand.fillColor = UIColor.redColor().CGColor
+        secondHand.fillColor = NSColor.redColor().CGColor
 
         secondHand.path = self.makeRectPath(secondStartPoint, width: secondWidth, height: secondHeight)
 
         // anchor point is already 0.5,0.5 so we can just rotate
         secondHand.transform = CATransform3DMakeRotation(secondRotation, 0, 0, 1)
+
+        var rotationAnimation = CABasicAnimation(keyPath: "transform")
+        rotationAnimation.duration = 10
+        rotationAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionLinear)
+        rotationAnimation.fillMode = kCAFillModeForwards
+        rotationAnimation.fromValue = NSValue(CATransform3D: CATransform3DMakeRotation(0, 0, 0, 1))
+        rotationAnimation.toValue = NSValue(CATransform3D: CATransform3DMakeRotation(M_PI, 0, 0, 1))
+
+        secondHand.addAnimation(rotationAnimation, forKey: "rotationTransform")
 
         self.handsLayer.addSublayer(secondHand)
     }
@@ -159,15 +174,43 @@ class ClockView: UIView {
     // convenience, makes a rectangular path
     func makeRectPath(start: CGPoint, width: CGFloat, height: CGFloat) -> CGPath {
 
-        let path = UIBezierPath()
+        let path = NSBezierPath()
         path.moveToPoint(start)
-        path.addLineToPoint(CGPointMake(start.x, start.y - height))
-        path.addLineToPoint(CGPointMake(start.x+width, start.y-height))
-        path.addLineToPoint(CGPointMake(start.x+width, start.y))
+        path.lineToPoint(CGPointMake(start.x, start.y - height))
+        path.lineToPoint(CGPointMake(start.x+width, start.y-height))
+        path.lineToPoint(CGPointMake(start.x+width, start.y))
         path.closePath()
 
-        return path.CGPath
+        return CGPathFromNSBezierPath(path)
     }
 }
 
+func CGPathFromNSBezierPath(nspath: NSBezierPath) -> CGPath! {
+    if nspath.elementCount == 0 {
+        return nil
+    }
+
+    let path = CGPathCreateMutable()
+    var didClosePath = false
+
+    if !didClosePath {
+        CGPathCloseSubpath(path)
+    }
+
+    return CGPathCreateCopy(path)
+}
+
 let view = ClockView()
+
+var testAnimation = CABasicAnimation(keyPath: "scale")
+testAnimation.duration = 10
+testAnimation.toValue = 10
+testAnimation.removedOnCompletion = false
+view.handsLayer.addAnimation(testAnimation, forKey: "scaleAnimation")
+
+
+// great for async functions, like network activity
+//XCPSetExecutionShouldContinueIndefinitely(continueIndefinitely: true)
+
+// not yet supported for iOS playgrounds
+//XCPShowView("clock", view)
