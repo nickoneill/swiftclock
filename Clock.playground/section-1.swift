@@ -24,10 +24,7 @@ class ClockView: NSView {
 
         // this is required to use layers in NSView,
         // different from default UIView behavior!
-        self.layer = CALayer()
         self.wantsLayer = true
-
-        self.layer.frame = NSRect(x:0, y:0, width:clockSize, height:clockSize)
 
         self.layer.addSublayer(self.backgroundLayer)
         self.layer.addSublayer(self.faceLayer)
@@ -58,9 +55,9 @@ class ClockView: NSView {
             let pct = Double(hour)/12
             let position = (pct*2*M_PI)-(M_PI_2)
 
+//            XCPCaptureValue("sinvalue", sin(Double(position)))
             let xadj = cos(Double(position))
             let yadj = sin(Double(position))
-//            XCPCaptureValue("cosvalue", xadj)
             let xpos = (clockSize/2) + (xadj*numberRadius) - (numberWidth/2)
             let ypos = clockSize - ((clockSize/2) + (yadj*numberRadius) + (numberWidth/2))
 
@@ -80,9 +77,6 @@ class ClockView: NSView {
         // look up time for hand values
         let format = NSDateFormatter()
         let now = NSDate()
-
-        let ok = (M_PI*2.0)/12
-        let thing = ok * 5
 
         format.dateFormat = "hh"
         let hour = format.stringFromDate(now).toInt()!
