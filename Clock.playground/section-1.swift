@@ -88,11 +88,11 @@ class ClockView: NSView {
 
         format.dateFormat = "mm"
         let minute = format.stringFromDate(now).toInt()!
-        let minuteRotation = (2.0*M_PI*(Double(minute)/60.0))+M_PI
+        let minuteRotation = CGFloat((2.0*M_PI*(Double(minute)/60.0))+M_PI)
 
         format.dateFormat = "ss"
         let second = format.stringFromDate(now).toInt()!
-        let secondRotation = (2.0*M_PI*(Double(second)/60.0))+M_PI
+        let secondRotation = CGFloat((2.0*M_PI*(Double(second)/60.0))+M_PI)
 
         // style setup for the hands
         let darkCenter = CAShapeLayer()
@@ -168,7 +168,7 @@ class ClockView: NSView {
         rotationAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionLinear)
         // this tiny amount off ensures that we always rotate in the
         // correct direction around the circle
-        rotationAnimation.toValue = NSValue(CATransform3D: CATransform3DMakeRotation(secondRotation+M_PI-(0.001), 0, 0, -1))
+        rotationAnimation.toValue = NSValue(CATransform3D: CATransform3DMakeRotation(secondRotation+CGFloat(M_PI)-(0.001), 0, 0, -1))
 
         secondHand.addAnimation(rotationAnimation, forKey: "rotationTransform")
 
