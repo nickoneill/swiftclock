@@ -9,7 +9,7 @@ class ClockView: NSView {
     let faceLayer = CAShapeLayer()
     let handsLayer = CAShapeLayer()
 
-    let clockSize = 256.0
+    let clockSize = CGFloat(256.0)
 
     override init() {
         super.init(frame: NSRect(x:0, y:0, width:clockSize, height:clockSize))
@@ -42,11 +42,11 @@ class ClockView: NSView {
     }
 
     func setUpFaceLayer() {
-        let faceInset = 15.0
+        let faceInset = CGFloat(15.0)
         let faceRadius = clockSize-(2*faceInset)
-        let numberRadius = 90.0
-        let numberWidth = 22.0
-        let numberHeight = 22.0
+        let numberRadius = CGFloat(90.0)
+        let numberWidth = CGFloat(22.0)
+        let numberHeight = CGFloat(22.0)
 
         let facePath = NSBezierPath(ovalInRect: NSRect(x:faceInset, y:faceInset, width:faceRadius, height:faceRadius))
 
@@ -60,13 +60,13 @@ class ClockView: NSView {
             let position = (pct*2*M_PI)-(M_PI_2)
 
 //            XCPCaptureValue("sinvalue", sin(Double(position)))
-            let xadj = cos(Double(position))
-            let yadj = sin(Double(position))
+            let xadj = CGFloat(cos(Double(position)))
+            let yadj = CGFloat(sin(Double(position)))
             let xpos = (clockSize/2) + (xadj*numberRadius) - (numberWidth/2)
             let ypos = clockSize - ((clockSize/2) + (yadj*numberRadius) + (numberWidth/2))
 
             let text = CATextLayer()
-            text.frame = CGRectMake(CGFloat(xpos), CGFloat(ypos), CGFloat(numberWidth), CGFloat(numberHeight))
+            text.frame = CGRectMake(xpos, ypos, numberWidth, numberHeight)
             text.string = hourtext
             text.fontSize = 20
             text.font = NSFont(name: "HelveticaNeue-Light", size: 10)
@@ -84,7 +84,7 @@ class ClockView: NSView {
 
         format.dateFormat = "hh"
         let hour = format.stringFromDate(now).toInt()!
-        let hourRotation = (2.0*M_PI*(Double(hour)/12.0))+M_PI
+        let hourRotation = CGFloat((2.0*M_PI*(Double(hour)/12.0))+M_PI)
 
         format.dateFormat = "mm"
         let minute = format.stringFromDate(now).toInt()!
@@ -96,25 +96,25 @@ class ClockView: NSView {
 
         // style setup for the hands
         let darkCenter = CAShapeLayer()
-        let darkSize = 13.0
+        let darkSize = CGFloat(13.0)
         let redCenter = CAShapeLayer()
         redCenter.fillColor = NSColor.redColor().CGColor
-        let redSize = 5.0
+        let redSize = CGFloat(5.0)
 
         // draw the black center circle
-        let darkPath = NSBezierPath(ovalInRect: CGRectMake(CGFloat((clockSize/2)-(darkSize/2)), CGFloat((clockSize/2)-(darkSize/2)), CGFloat(darkSize), CGFloat(darkSize)))
+        let darkPath = NSBezierPath(ovalInRect: CGRectMake((clockSize/2)-(darkSize/2), (clockSize/2)-(darkSize/2), darkSize, darkSize))
         darkCenter.path = CGPathFromNSBezierPath(darkPath)
 
         self.handsLayer.addSublayer(darkCenter)
 
         // set up the minute hand
-        let minuteWidth = 3.0
-        let minuteHeight = 75.0
-        let minuteStartPoint = CGPointMake(CGFloat((clockSize/2)-(minuteWidth/2)), CGFloat(clockSize/2))
+        let minuteWidth = CGFloat(3.0)
+        let minuteHeight = CGFloat(75.0)
+        let minuteStartPoint = CGPointMake((clockSize/2)-(minuteWidth/2), clockSize/2)
 
         // draw minute hand
         let minuteHand = CAShapeLayer()
-        minuteHand.frame = CGRectMake(0, 0, CGFloat(clockSize), CGFloat(clockSize))
+        minuteHand.frame = CGRectMake(0, 0, clockSize, clockSize)
         minuteHand.fillColor = NSColor.blackColor().CGColor
 
         minuteHand.path = self.makeRectPath(minuteStartPoint, width: CGFloat(minuteWidth), height: CGFloat(minuteHeight))
@@ -125,39 +125,39 @@ class ClockView: NSView {
         self.handsLayer.addSublayer(minuteHand)
 
         // set up the hour hand
-        let hourWidth = 4.0
-        let hourHeight = 35.0
-        let hourStartPoint = CGPointMake(CGFloat((clockSize/2)-(hourWidth/2)), CGFloat(clockSize/2))
+        let hourWidth = CGFloat(4.0)
+        let hourHeight = CGFloat(35.0)
+        let hourStartPoint = CGPointMake((clockSize/2)-(hourWidth/2), clockSize/2)
 
         // draw hour hand
         let hourHand = CAShapeLayer()
-        hourHand.frame = CGRectMake(0, 0, CGFloat(clockSize), CGFloat(clockSize))
+        hourHand.frame = CGRectMake(0, 0, clockSize, clockSize)
         hourHand.fillColor = NSColor.blackColor().CGColor
 
-        hourHand.path = self.makeRectPath(hourStartPoint, width: CGFloat(hourWidth), height: CGFloat(hourHeight))
+        hourHand.path = self.makeRectPath(hourStartPoint, width: hourWidth, height: hourHeight)
 
         // anchor point is already 0.5,0.5 so we can just rotate
-        hourHand.transform = CATransform3DMakeRotation(CGFloat(hourRotation), 0, 0, -1)
+        hourHand.transform = CATransform3DMakeRotation(hourRotation, 0, 0, -1)
 
         self.handsLayer.addSublayer(hourHand)
 
         // draw the red center bit over the black existing ones
-        let redPath = NSBezierPath(ovalInRect: CGRectMake(CGFloat((clockSize/2)-(redSize/2)), CGFloat((clockSize/2)-(redSize/2)), CGFloat(redSize), CGFloat(redSize)))
+        let redPath = NSBezierPath(ovalInRect: CGRectMake((clockSize/2)-(redSize/2), (clockSize/2)-(redSize/2), redSize, redSize))
         redCenter.path = CGPathFromNSBezierPath(redPath)
 
         self.handsLayer.addSublayer(redCenter)
 
         // set up the seconds hand
-        let secondWidth = 2.0
-        let secondHeight = 65.0
-        let secondStartPoint = CGPointMake(CGFloat((clockSize/2)-(secondWidth/2)), CGFloat(clockSize/2))
+        let secondWidth = CGFloat(2.0)
+        let secondHeight = CGFloat(65.0)
+        let secondStartPoint = CGPointMake((clockSize/2)-(secondWidth/2), clockSize/2)
 
         // draw the seconds hand
         let secondHand = CAShapeLayer()
-        secondHand.frame = CGRectMake(0, 0, CGFloat(clockSize), CGFloat(clockSize))
+        secondHand.frame = CGRectMake(0, 0, clockSize, clockSize)
         secondHand.fillColor = NSColor.redColor().CGColor
 
-        secondHand.path = self.makeRectPath(secondStartPoint, width: CGFloat(secondWidth), height: CGFloat(secondHeight))
+        secondHand.path = self.makeRectPath(secondStartPoint, width: secondWidth, height: secondHeight)
 
         // anchor point is already 0.5,0.5 so we can just rotate
         secondHand.transform = CATransform3DMakeRotation(CGFloat(secondRotation), 0, 0, -1)
