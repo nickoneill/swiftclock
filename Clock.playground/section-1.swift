@@ -117,10 +117,10 @@ class ClockView: NSView {
         minuteHand.frame = CGRectMake(0, 0, clockSize, clockSize)
         minuteHand.fillColor = NSColor.blackColor().CGColor
 
-        minuteHand.path = self.makeRectPath(minuteStartPoint, width: CGFloat(minuteWidth), height: CGFloat(minuteHeight))
+        minuteHand.path = self.makeRectPath(minuteStartPoint, width: minuteWidth, height: minuteHeight)
 
         // anchor point is already 0.5,0.5 so we can just rotate
-        minuteHand.transform = CATransform3DMakeRotation(CGFloat(minuteRotation), 0, 0, -1)
+        minuteHand.transform = CATransform3DMakeRotation(minuteRotation, 0, 0, -1)
 
         self.handsLayer.addSublayer(minuteHand)
 
@@ -160,7 +160,7 @@ class ClockView: NSView {
         secondHand.path = self.makeRectPath(secondStartPoint, width: secondWidth, height: secondHeight)
 
         // anchor point is already 0.5,0.5 so we can just rotate
-        secondHand.transform = CATransform3DMakeRotation(CGFloat(secondRotation), 0, 0, -1)
+        secondHand.transform = CATransform3DMakeRotation(secondRotation, 0, 0, -1)
 
         // rotate half a circle in thirty seconds
         var rotationAnimation = CABasicAnimation(keyPath: "transform")
@@ -168,7 +168,7 @@ class ClockView: NSView {
         rotationAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionLinear)
         // this tiny amount off ensures that we always rotate in the
         // correct direction around the circle
-        rotationAnimation.toValue = NSValue(CATransform3D: CATransform3DMakeRotation(CGFloat(secondRotation+M_PI-(0.001)), 0, 0, -1))
+        rotationAnimation.toValue = NSValue(CATransform3D: CATransform3DMakeRotation(secondRotation+M_PI-(0.001), 0, 0, -1))
 
         secondHand.addAnimation(rotationAnimation, forKey: "rotationTransform")
 
